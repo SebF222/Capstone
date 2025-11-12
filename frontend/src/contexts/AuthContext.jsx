@@ -68,7 +68,9 @@ export const AuthProvider = ({ children }) => {
         token,
         user, 
         login,
-        isLoading
+        isLoading,
+        setUser,
+        setToken
    
 
     }

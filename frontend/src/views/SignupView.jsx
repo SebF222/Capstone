@@ -1,6 +1,7 @@
 import React from 'react'
 import { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
 const API_URL = 'http://127.0.0.1:5000';
 
@@ -17,6 +18,8 @@ const SignupView = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   const navigate  = useNavigate()
+  const { setUser, setToken } = useAuth()
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -106,7 +109,10 @@ const SignupView = () => {
       });
       
       const loginResult = await loginResponse.json();
-      
+      setUser(loginResult.user)
+      setToken(loginResult.token)
+
+
       if (loginResponse.ok) {
         // Store token and user data
         localStorage.setItem('token', loginResult.token);
@@ -114,6 +120,9 @@ const SignupView = () => {
         
         // Redirect to setup page
         navigate('/favorites')
+        setUser(loginResult.user)
+        setToken(loginResult.token)
+
       } else {
         // If auto-login fails, still count it as success and redirect to login
         setErrors({ submit: 'Account created! Please log in.' });

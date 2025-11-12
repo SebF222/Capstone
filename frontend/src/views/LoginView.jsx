@@ -1,5 +1,6 @@
 import React, { useState} from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
+import { useAuth } from '../contexts/AuthContext';
 
 const API_URL = 'http://127.0.0.1:5000';
 
@@ -11,7 +12,10 @@ const LoginView = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   const navigate  = useNavigate()
+  const { setUser, setToken } = useAuth()
 
+
+  
 const validateForm = () => {
     const newErrors = {};
 
@@ -47,7 +51,11 @@ const validateForm = () => {
         body: JSON.stringify({ email, password })
       });
 
+      
       const data = await response.json();
+      console.log(data)
+        setUser(data.user)
+        setToken(data.token)
 
       if (response.ok) {
         // Store token and user data in localStorage

@@ -19,7 +19,7 @@ const ManageFavoritesView = () => {
   const sportOptions = [
     { id: 'basketball', name: 'Basketball', icon: '🏀' },
     { id: 'baseball', name: 'Baseball', icon: '⚾' },
-    { id: 'nfl', name: 'NFL', icon: '🏈' },
+    { id: 'nfl', name: 'Football', icon: '🏈' },
     { id: 'soccer', name: 'Soccer', icon: '⚽' }
   ];
 
@@ -80,7 +80,9 @@ const ManageFavoritesView = () => {
         }
       );
 
+      
       const data = await response.json();
+      console.log(data)
       if (response.ok && data.response) {
         setSearchResults(data.response.slice(0, 20));
         if (data.response.length === 0) {
@@ -298,6 +300,7 @@ const ManageFavoritesView = () => {
               </h3>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '1rem' }}>
                 {searchResults.map((team) => (
+                  selectedSport !== 'soccer'?
                   <div
                     key={team.id}
                     style={{
@@ -310,7 +313,7 @@ const ManageFavoritesView = () => {
                     }}
                   >
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                      {(team.logo || team.image) && (
+                      {(team.logo || team.image ) && (
                         <img
                           src={team.logo || team.image}
                           alt={team.name}
@@ -340,6 +343,51 @@ const ManageFavoritesView = () => {
                       + Add to Favorites
                     </button>
                   </div>
+                  :
+                  <div
+                    key={team.team.id}
+                    style={{
+                      padding: '1rem',
+                      border: '1px solid #e5e7eb',
+                      borderRadius: '0.375rem',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '0.75rem'
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                      {(team.team.logo || team.team.image ) && (
+                        <img
+                          src={team.team.logo || team.team.image}
+                          alt={team.team.name}
+                          style={{ width: '50px', height: '50px', objectFit: 'contain' }}
+                        />
+                      )}
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontWeight: '600', fontSize: '0.875rem' }}>{team.team.name}</div>
+                        <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>
+                          {team.team.league?.name || team.team.country?.name || ''}
+                        </div>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => handleAddFavorite(team)}
+                      style={{
+                        padding: '0.5rem',
+                        backgroundColor: '#2563eb',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '0.375rem',
+                        fontSize: '0.875rem',
+                        fontWeight: '500',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      + Add to Favorites
+                    </button>
+                  </div>
+                    
+
                 ))}
               </div>
             </div>

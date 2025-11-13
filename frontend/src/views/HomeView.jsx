@@ -18,8 +18,6 @@ const HomeView = () => {
     return yesterday.toISOString().split('T')[0];
   });
 
-
-
   const [searchInput, setSearchInput] = useState(''); // what user types
   const [searchQuery, setSearchQuery] = useState(''); // submitted query
 

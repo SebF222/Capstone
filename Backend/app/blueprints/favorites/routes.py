@@ -62,22 +62,22 @@ def add_favorite():
 
 
 # Remove a favorite team
-@favorites_bp.route('/<int:team_id>', methods=['DELETE'])
+@favorites_bp.route('/<int:favorite_id>', methods=['DELETE'])
 @token_required
-def remove_favorite(team_id):
+def remove_favorite(favorite_id):
     user_id = request.user_id  # Get user_id from token
-    
-    # Find favorite
+
+    # Find favorite by its internal ID
     favorite = db.session.query(FavoriteTeam).filter(
         FavoriteTeam.user_id == user_id,
-        FavoriteTeam.team_id == team_id
+        FavoriteTeam.id == favorite_id
     ).first()
-    
+
     if favorite:
         db.session.delete(favorite)
         db.session.commit()
         return jsonify({"message": "Team removed from favorites"}), 200
-    
+
     return jsonify({"error": "Favorite not found"}), 404
 
 

@@ -24,8 +24,11 @@ const ManageFavoritesView = () => {
   ];
 
   useEffect(() => {
-    loadFavorites();
+    loadFavorites()
   }, []);
+  
+  
+
 
   const loadFavorites = async () => {
     const token = localStorage.getItem('token');
@@ -100,75 +103,92 @@ const ManageFavoritesView = () => {
   };
 
   const handleAddFavorite = async (team) => {
-    const token = localStorage.getItem('token');
+  const token = localStorage.getItem('token');
 
-    const alreadyExists = favorites.some((fav) => fav.team_id === team.id);
-    if (alreadyExists) {
-      showMessage('error', 'Team already in favorites');
-      return;
+  // Normalize team structure for all sports
+  const normalized =
+    selectedSport === "soccer"
+      ? {
+          id: team.team.id,
+          name: team.team.name,
+          logo: team.team.logo,
+          league: team.league?.name || "SOCCER",
+          country: team.league?.country || "",
+        }
+      : {
+          id: team.id,
+          name: team.name,
+          logo: team.logo || team.image || "",
+          league: team.league?.name || selectedSport.toUpperCase(),
+          country: team.country?.name || team.country || "",
+        };
+
+  // Prevent duplicates
+  const alreadyExists = favorites.some(
+    (fav) => fav.team_id === normalized.id
+  );
+  if (alreadyExists) {
+    showMessage("error", "Team already in favorites");
+    return;
+  }
+
+  try {
+    const favoriteData = {
+      team_id: normalized.id,
+      team_name: normalized.name,
+      team_logo: normalized.logo,
+      league: normalized.league,
+      country: normalized.country,
+    };
+
+    const response = await fetch(`${API_URL}/favorites`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(favoriteData),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      setFavorites((prev) => [...prev, data.favorite]);
+      showMessage("success", `${normalized.name} added to favorites!`);
+    } else {
+      showMessage("error", data.error || "Failed to add favorite");
     }
-
-    try {
-      const favoriteData = {
-        team_id: team.id,
-        team_name: team.name,
-        team_logo: team.logo || team.image || '',
-        league: team.league?.name || team.country?.name || selectedSport.toUpperCase(),
-        country: team.country?.name || team.country || ''
-      };
-
-      const response = await fetch(`${API_URL}/favorites`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify(favoriteData)
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        setFavorites((prev) => [...prev, data.favorite]);
-        showMessage('success', `${team.name} added to favorites!`);
-      } else {
-        showMessage('error', data.error || 'Failed to add favorite');
-      }
-    } catch (error) {
-      console.error('Add favorite error:', error);
-      showMessage('error', 'Failed to add favorite');
-    }
-  };
+  } catch (error) {
+    console.error("Add favorite error:", error);
+    showMessage("error", "Failed to add favorite");
+  }
+};
 
   const handleRemoveFavorite = async (favoriteId, teamName) => {
-    const token = localStorage.getItem('token');
+  const token = localStorage.getItem('token');
 
-    if (!window.confirm(`Remove ${teamName} from favorites?`)) {
-      return;
-    }
+  if (!window.confirm(`Remove ${teamName} from favorites?`)) return;
 
-    try {
-      const favorite = favorites.find((f) => f.id === favoriteId);
-      if (!favorite) return;
-
-      const response = await fetch(`${API_URL}/favorites/${favorite.id}`, { // fixed: use favorite.id, not team_id
-        method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-
-      if (response.ok) {
-        setFavorites((prev) => prev.filter((fav) => fav.id !== favoriteId));
-        showMessage('success', `${teamName} removed from favorites`);
-      } else {
-        showMessage('error', 'Failed to remove favorite');
+  try {
+    const response = await fetch(`${API_URL}/favorites/${favoriteId}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`
       }
-    } catch (error) {
-      console.error('Remove favorite error:', error);
+    });
+
+    if (response.ok) {
+      setFavorites(prev => prev.filter(fav => fav.id !== favoriteId));
+      showMessage('success', `${teamName} removed from favorites`);
+    } else {
       showMessage('error', 'Failed to remove favorite');
     }
-  };
+  } catch (error) {
+    console.error('Remove favorite error:', error);
+    showMessage('error', 'Failed to remove favorite');
+  }
+};
+
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#f3f4f6', padding: '2rem 1rem' }}>
@@ -447,7 +467,7 @@ const ManageFavoritesView = () => {
                     </div>
                   </div>
                   <button
-                    onClick={() => handleRemoveFavorite(fav.id, fav.team_name)}
+                    onClick={() => handleRemoveFavorite(fav.id, fav.team_name)} // the data getting passed in might be altared but i need to fix this 
                     style={{
                       padding: '0.5rem',
                       backgroundColor: '#dc2626',

@@ -1,11 +1,11 @@
 import React from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react';
+import { useAuth } from '../contexts/AuthContext';
 
 const API_URL = 'http://127.0.0.1:5000';
 
 const ProfileView = () => {
-  const [user, setUser] = useState(null);
   const [favorites, setFavorites] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
   const [errors, setErrors] = useState({});
@@ -19,6 +19,7 @@ const ProfileView = () => {
     password: ''
   });
   const navigate  = useNavigate()
+  const {user, setUser} = useAuth()
 
   useEffect(() => {
     loadUserData();
@@ -29,7 +30,7 @@ const ProfileView = () => {
     const token = localStorage.getItem('token');
     
     if (!storedUser || !token) {
-      window.location.href = '/login';
+      navigate('/login');
       return;
     }
 
@@ -173,6 +174,7 @@ const ProfileView = () => {
       if (response.ok) {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
+        setUser(null) //current nobody is logged in thats why im doing setUser(null)
         alert('Account deleted successfully');
         navigate('/signup')
       }

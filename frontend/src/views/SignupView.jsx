@@ -117,11 +117,12 @@ const SignupView = () => {
         // Store token and user data
         localStorage.setItem('token', loginResult.token);
         localStorage.setItem('user', JSON.stringify(loginResult.user));
-        
-        // Redirect to setup page
-        navigate('/favorites')
         setUser(loginResult.user)
         setToken(loginResult.token)
+
+        // Redirect to setup page
+        navigate('/favorites')
+
 
       } else {
         // If auto-login fails, still count it as success and redirect to login

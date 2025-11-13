@@ -1,12 +1,14 @@
 import React from 'react'
 import { NavLink } from 'react-router-dom'
 import { useState, useEffect } from 'react';
+import { useAuth } from '../../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 // adding a clock 
 const Navbar = () => {
-  const [user, setUser] = useState(null);
   const [currentTime, setCurrentTime] = useState(new Date());
-  
+  const { user, setUser } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -29,7 +31,7 @@ const Navbar = () => {
     localStorage.removeItem('token') // logging out by removing first the token 
     localStorage.removeItem('user') // then we remove the user name 
     setUser(null) //current nobody is logged in thats why im doing setUser(null)
-    window.location.href = '/login'; // where the page back tracks to 
+    navigate('/login'); // where the page back tracks to 
   };
 
   // the format and how the date will be displayed on screen

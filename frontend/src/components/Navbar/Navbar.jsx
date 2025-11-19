@@ -70,7 +70,7 @@ const Navbar = () => {
             }}
           >
             <span style={{ fontSize: '1.75rem' }}>🏆</span>
-            SPORTS HUB
+            SPORTS CENTER
           </NavLink>
 
           <div style={{ display: 'flex', gap: '1.5rem' }}>

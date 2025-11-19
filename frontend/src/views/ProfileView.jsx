@@ -140,7 +140,7 @@ const ProfileView = () => {
         setIsEditing(false);
         setTimeout(() => setSuccessMessage(''), 3000);
       } else {
-        setErrors({ submit: data.error || 'Failed to update profile' });
+        setErrors({ submit: data.error || 'Failed to update profile, Enter password' });
       }
     } catch (error) {
       console.error('Update error:', error);
@@ -157,7 +157,7 @@ const ProfileView = () => {
   };
 
   const handleDeleteAccount = async () => {
-    if (!window.confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+    if (!window.confirm('Are you sure you want to delete your account?')) {
       return;
     }
 
@@ -371,7 +371,7 @@ const ProfileView = () => {
 
                 <div>
                   <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', color: '#374151', marginBottom: '0.5rem' }}>
-                    New Password (leave blank to keep current)
+                    New Password (Enter current password to keep current password or to update profile)
                   </label>
                   <input
                     name="password"

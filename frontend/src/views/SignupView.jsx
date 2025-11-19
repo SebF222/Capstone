@@ -204,7 +204,7 @@ const SignupView = () => {
                   borderRadius: '0.375rem',
                   fontSize: '1rem'
                 }}
-                placeholder="your.email@example.com"
+                placeholder="youremail@example.com"
               />
               {errors.email && (
                 <p style={{ color: '#dc2626', fontSize: '0.75rem', marginTop: '0.25rem' }}>{errors.email}</p>
